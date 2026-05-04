@@ -23,6 +23,7 @@ export function HomePage(): HTMLElement {
 
   const stats = loadStats();
   const rank = calcRank(stats.sessions);
+  const hasData = stats.sessions.some(s => s.answers.length > 0);
 
   const rankCard = document.createElement('div');
   rankCard.className = 'card rank-card';
@@ -31,8 +32,8 @@ export function HomePage(): HTMLElement {
     <div class="rank-name">${rank.name}</div>
     <div class="rank-details">
       <span>スコア <strong>${rank.score.toFixed(1)}</strong></span>
-      <span>正答率 <strong>${rank.rate > 0 ? Math.round(rank.rate * 100) : '—'}%</strong></span>
-      <span>avgMs <strong>${rank.avgMs > 0 ? Math.round(rank.avgMs) : '—'}</strong></span>
+      <span>正答率 <strong>${hasData ? Math.round(rank.rate * 100) + '%' : '—'}</strong></span>
+      <span>avgMs <strong>${hasData ? Math.round(rank.avgMs) : '—'}</strong></span>
     </div>
   `;
 

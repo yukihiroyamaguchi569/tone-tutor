@@ -67,7 +67,10 @@ export function calcRank(sessions: SessionResult[]): RankResult {
 export function getPreviousRankIndex(): number {
   try {
     const raw = localStorage.getItem(PREV_KEY);
-    return raw !== null ? Number(raw) : -1;
+    if (raw === null) return -1;
+    const parsed = Number(raw);
+    if (!Number.isInteger(parsed) || parsed < 0 || parsed >= RANKS.length) return -1;
+    return parsed;
   } catch {
     return -1;
   }
