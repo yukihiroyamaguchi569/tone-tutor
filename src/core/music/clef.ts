@@ -1,4 +1,5 @@
 import type { Clef, RangeConfig } from '../../types/index.js';
+import { isNatural } from './pitch.js';
 
 export interface ClefDef {
   id: Clef;
@@ -39,6 +40,26 @@ export const CLEF_DEFS: Record<Clef, ClefDef> = {
 };
 
 export const ALL_CLEFS: Clef[] = ['treble', 'bass', 'alto'];
+
+/** staffMinMidi から自然音を 9 音収集し、偶数index→線、奇数index→間として返す */
+function collectStaffNaturals(clef: Clef): number[] {
+  const start = CLEF_DEFS[clef].staffMinMidi;
+  const result: number[] = [];
+  for (let m = start; result.length < 9; m++) {
+    if (isNatural(m)) result.push(m);
+  }
+  return result;
+}
+
+/** 5線の MIDI (下から上へ 5音) */
+export function staffLineMidis(clef: Clef): number[] {
+  return collectStaffNaturals(clef).filter((_, i) => i % 2 === 0);
+}
+
+/** 5線の間の MIDI (下から上へ 4音) */
+export function staffSpaceMidis(clef: Clef): number[] {
+  return collectStaffNaturals(clef).filter((_, i) => i % 2 === 1);
+}
 
 export function defaultRangeConfig(clef: Clef): RangeConfig {
   const def = CLEF_DEFS[clef];
