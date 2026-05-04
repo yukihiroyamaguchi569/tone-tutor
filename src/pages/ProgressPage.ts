@@ -36,6 +36,7 @@ export function ProgressPage(): HTMLElement {
   summaryCard.innerHTML = `
     <div><div style="font-size:1.6rem;font-weight:800">${totalSessions}</div><div class="label">セッション</div></div>
     <div><div style="font-size:1.6rem;font-weight:800">${totalAnswers}</div><div class="label">総問数</div></div>
+    <div><div style="font-size:1.6rem;font-weight:800">${totalCorrect}</div><div class="label">正答問数</div></div>
     <div><div style="font-size:1.6rem;font-weight:800">${overallRate}%</div><div class="label">全体正答率</div></div>
   `;
 
