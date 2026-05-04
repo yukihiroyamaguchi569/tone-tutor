@@ -6,13 +6,19 @@ export function HomePage(): HTMLElement {
   const page = document.createElement('div');
   page.className = 'page';
 
+  const hero = document.createElement('div');
+  hero.style.cssText = 'display:flex;flex-direction:column;gap:4px;';
+
   const title = document.createElement('h1');
   title.className = 'page-title';
-  title.textContent = '🎵 Tone Tutor';
+  title.style.cssText = 'font-size:2.6rem;';
+  title.textContent = 'Tone Tutor';
 
   const subtitle = document.createElement('p');
-  subtitle.style.cssText = 'color:#64748b;font-size:0.95rem;';
+  subtitle.style.cssText = 'color:var(--text-2);font-size:0.9rem;letter-spacing:0.08em;text-transform:uppercase;font-weight:500;';
   subtitle.textContent = '楽譜読譜トレーナー';
+
+  hero.append(title, subtitle);
 
   const settings = loadSettings();
   const modeLabel = { timeAttack: 'タイムアタック', streak: '連続正解', untimed: '通常' }[settings.mode];
@@ -22,11 +28,11 @@ export function HomePage(): HTMLElement {
 
   const infoCard = document.createElement('div');
   infoCard.className = 'card';
-  infoCard.style.cssText = 'display:flex;gap:16px;flex-wrap:wrap;font-size:0.9rem;';
+  infoCard.style.cssText = 'display:flex;gap:20px;flex-wrap:wrap;font-size:0.88rem;align-items:center;';
   infoCard.innerHTML = `
-    <span>🎼 <strong>${clefLabel}記号</strong></span>
-    <span>⚡ <strong>${modeLabel}</strong></span>
-    <span>📝 <strong>${settings.notation === 'solfege' ? 'ドレミ' : 'CDE'}</strong></span>
+    <span style="color:var(--text-2)">🎼 <span style="color:var(--text);font-weight:600">${clefLabel}記号</span></span>
+    <span style="color:var(--text-2)">⚡ <span style="color:var(--text);font-weight:600">${modeLabel}</span></span>
+    <span style="color:var(--text-2)">📝 <span style="color:var(--text);font-weight:600">${settings.notation === 'solfege' ? 'ドレミ' : 'CDE'}</span></span>
   `;
 
   const grid = document.createElement('div');
@@ -65,6 +71,6 @@ export function HomePage(): HTMLElement {
 
   grid.append(startBtn, reviewBtn, progressBtn, settingsBtn, chartTreble);
 
-  page.append(title, subtitle, infoCard, grid);
+  page.append(hero, infoCard, grid);
   return page;
 }

@@ -59,7 +59,7 @@ export function ResultPage(): HTMLElement {
   wrongSection.innerHTML = '<p class="label">誤答した音</p>';
   const wrongMidis = [...new Set(result.answers.filter(a => !a.correct).map(a => a.pitch.midi))];
   if (wrongMidis.length === 0) {
-    wrongSection.innerHTML += '<p style="color:#16a34a;font-weight:600">全問正解！</p>';
+    wrongSection.innerHTML += '<p style="color:var(--correct);font-weight:600">全問正解！🎉</p>';
   } else {
     const ul = document.createElement('ul');
     ul.className = 'wrong-list';

@@ -5,26 +5,41 @@
 }
 
 :root {
-  --color-bg: #fafafa;
-  --color-surface: #ffffff;
-  --color-primary: #2563eb;
-  --color-primary-hover: #1d4ed8;
-  --color-correct: #16a34a;
-  --color-wrong: #dc2626;
-  --color-text: #1e293b;
-  --color-muted: #64748b;
-  --color-border: #e2e8f0;
-  --radius: 8px;
-  --shadow: 0 1px 4px rgba(0,0,0,0.08);
-  font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+  --bg:            #08090f;
+  --bg-grid:       #0d0e16;
+  --surface:       #111320;
+  --surface-2:     #181a2e;
+  --surface-3:     #1f213a;
+  --gold:          #e8b84b;
+  --gold-bright:   #f5c95f;
+  --gold-dim:      #b8902e;
+  --gold-glow:     rgba(232, 184, 75, 0.14);
+  --gold-glow-lg:  rgba(232, 184, 75, 0.06);
+  --correct:       #34d27b;
+  --correct-glow:  rgba(52, 210, 123, 0.18);
+  --wrong:         #f05454;
+  --wrong-glow:    rgba(240, 84, 84, 0.18);
+  --text:          #e8e9f4;
+  --text-2:        #9496bb;
+  --text-3:        #5a5d80;
+  --border:        #1e2038;
+  --border-2:      #292c4a;
+  --radius:        12px;
+  --font-display:  'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-body:     'Outfit', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+  font-family: var(--font-body);
+  color-scheme: dark;
 }
 
 body {
-  background: var(--color-bg);
-  color: var(--color-text);
+  background: var(--bg);
+  color: var(--text);
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
+  /* subtle dot-grid texture */
+  background-image: radial-gradient(circle, #ffffff06 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
 #app {
@@ -33,216 +48,364 @@ body {
   flex-direction: column;
 }
 
-/* ---- 共通レイアウト ---- */
+/* ---- Page layout ---- */
 .page {
   max-width: 640px;
   margin: 0 auto;
-  padding: 24px 16px;
+  padding: 28px 20px 40px;
   width: 100%;
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
+  animation: pageIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.page > * {
+  animation: fadeUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.page > *:nth-child(1) { animation-delay: 0.04s; }
+.page > *:nth-child(2) { animation-delay: 0.09s; }
+.page > *:nth-child(3) { animation-delay: 0.14s; }
+.page > *:nth-child(4) { animation-delay: 0.18s; }
+.page > *:nth-child(5) { animation-delay: 0.22s; }
+.page > *:nth-child(6) { animation-delay: 0.25s; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- Page title ---- */
 .page-title {
-  font-size: 1.4rem;
+  font-family: var(--font-display);
+  font-size: 2rem;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  color: var(--text);
 }
 
-/* ---- ボタン ---- */
+/* ---- Buttons ---- */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 12px 20px;
+  gap: 8px;
+  padding: 13px 22px;
   border-radius: var(--radius);
   border: none;
-  font-size: 1rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s, transform 0.1s;
+  transition: background 0.18s, transform 0.12s, box-shadow 0.18s, color 0.18s;
   text-decoration: none;
   white-space: nowrap;
+  letter-spacing: 0.01em;
+  position: relative;
+  overflow: hidden;
 }
 .btn:active { transform: scale(0.97); }
+
 .btn-primary {
-  background: var(--color-primary);
-  color: #fff;
+  background: var(--gold);
+  color: #09090e;
 }
-.btn-primary:hover { background: var(--color-primary-hover); }
+.btn-primary:hover {
+  background: var(--gold-bright);
+  box-shadow: 0 0 22px var(--gold-glow), 0 4px 12px rgba(0,0,0,0.4);
+}
+
 .btn-secondary {
-  background: var(--color-surface);
-  color: var(--color-text);
-  border: 1.5px solid var(--color-border);
+  background: var(--surface-2);
+  color: var(--text);
+  border: 1.5px solid var(--border-2);
 }
-.btn-secondary:hover { background: #f1f5f9; }
+.btn-secondary:hover {
+  background: var(--surface-3);
+  border-color: var(--gold-dim);
+  color: var(--gold);
+}
+
+.btn:disabled {
+  opacity: 0.38;
+  pointer-events: none;
+}
+
 .btn-full { width: 100%; }
 
-/* ---- カード ---- */
+/* ---- Card ---- */
 .card {
-  background: var(--color-surface);
+  background: var(--surface);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
   padding: 20px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.35);
+  position: relative;
 }
 
-/* ---- 選択肢ボタン ---- */
+/* gold top-line accent for elevated cards */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 10%, var(--gold-dim) 40%, var(--gold) 60%, transparent 90%);
+  opacity: 0;
+  border-radius: var(--radius) var(--radius) 0 0;
+  transition: opacity 0.25s;
+  pointer-events: none;
+}
+
+/* ---- Choice buttons ---- */
 .choices {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 }
-.choice-btn {
-  padding: 10px 14px;
-  font-size: 1rem;
-  font-weight: 700;
-  min-width: 56px;
-  background: var(--color-surface);
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius);
-  cursor: pointer;
-  transition: border-color 0.15s, background 0.15s, transform 0.1s;
-}
-.choice-btn:hover { border-color: var(--color-primary); background: #eff6ff; }
-.choice-btn:active { transform: scale(0.96); }
-.choice-btn.correct { border-color: var(--color-correct); background: #f0fdf4; }
-.choice-btn.wrong   { border-color: var(--color-wrong);   background: #fef2f2; }
 
-/* ---- スコア表示 ---- */
+.choice-btn {
+  padding: 10px 15px;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  min-width: 52px;
+  background: var(--surface-2);
+  border: 1.5px solid var(--border-2);
+  border-radius: 8px;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, transform 0.1s, box-shadow 0.15s, color 0.15s;
+  letter-spacing: 0.01em;
+}
+.choice-btn:hover {
+  border-color: var(--gold);
+  background: var(--surface-3);
+  color: var(--gold);
+  box-shadow: 0 0 12px var(--gold-glow);
+}
+.choice-btn:active { transform: scale(0.95); }
+
+.choice-btn.correct {
+  border-color: var(--correct);
+  background: var(--correct-glow);
+  color: var(--correct);
+  animation: correctPop 0.35s ease;
+}
+.choice-btn.wrong {
+  border-color: var(--wrong);
+  background: var(--wrong-glow);
+  color: var(--wrong);
+  animation: wrongShake 0.35s ease;
+}
+
+@keyframes correctPop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+@keyframes wrongShake {
+  0%   { transform: translateX(0); }
+  20%  { transform: translateX(-5px); }
+  60%  { transform: translateX(5px); }
+  100% { transform: translateX(0); }
+}
+
+/* ---- Score bar (timer / streak) ---- */
 .score-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-weight: 600;
 }
-.timer { font-size: 1.5rem; font-variant-numeric: tabular-nums; }
-.streak { font-size: 1rem; color: var(--color-muted); }
 
-/* ---- 譜面コンテナ ---- */
+.timer {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--gold);
+  letter-spacing: 0.02em;
+  line-height: 1;
+  transition: color 0.4s;
+}
+.timer.warn  { color: #f5a623; }
+.timer.danger{ color: var(--wrong); animation: timerPulse 0.6s ease infinite alternate; }
+
+@keyframes timerPulse {
+  from { opacity: 1; }
+  to   { opacity: 0.55; }
+}
+
+.streak {
+  font-size: 0.95rem;
+  color: var(--text-2);
+  background: var(--surface-2);
+  border: 1px solid var(--border-2);
+  border-radius: 20px;
+  padding: 4px 12px;
+}
+
+/* ---- Sheet music container ---- */
 .score-container {
   display: flex;
   align-items: center;
   justify-content: center;
   min-height: 160px;
+  /* paper-white backdrop so VexFlow notation is always readable */
+  background: #fefefe;
+  border-radius: var(--radius);
+  padding: 12px;
+  box-shadow: 0 0 32px rgba(232,184,75,0.08), 0 4px 24px rgba(0,0,0,0.5);
+  border: 1px solid #d9d9d9;
 }
 .score-container canvas,
 .score-container svg { display: block; }
 
-/* ---- 画面鍵盤 ---- */
+/* ---- On-screen keyboard ---- */
 .keyboard {
   display: flex;
   gap: 2px;
   overflow-x: auto;
   padding: 4px 0 8px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
+.keyboard::-webkit-scrollbar { display: none; }
+
 .key {
   flex-shrink: 0;
   height: 80px;
   width: 36px;
-  border-radius: 0 0 4px 4px;
-  border: 1.5px solid #999;
-  background: #fff;
+  border-radius: 0 0 6px 6px;
+  border: 1.5px solid #333a4a;
+  background: #e8eaf0;
   cursor: pointer;
   position: relative;
-  transition: background 0.1s;
+  transition: background 0.1s, box-shadow 0.1s;
 }
 .key.black {
   height: 52px;
   width: 24px;
-  background: #222;
-  border-color: #000;
+  background: #1a1c2a;
+  border-color: #0a0b14;
   margin: 0 -12px;
   z-index: 1;
 }
-.key:hover { background: #dbeafe; }
-.key.black:hover { background: #1e40af; }
-.key.active { background: var(--color-primary); }
-.key.black.active { background: var(--color-primary-hover); }
+.key:hover { background: #fef3c7; box-shadow: 0 0 8px var(--gold-glow); }
+.key.black:hover { background: #3a3000; box-shadow: 0 0 8px var(--gold-glow); }
+.key.active { background: var(--gold); box-shadow: 0 0 16px var(--gold-glow); }
+.key.black.active { background: var(--gold-dim); }
 
-/* ---- ホーム画面 ---- */
+/* ---- Home screen ---- */
 .home-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 10px;
 }
 
-/* ---- 進捗グラフ ---- */
-.chart-wrap { overflow-x: auto; }
+/* ---- Charts ---- */
+.chart-wrap { overflow-x: auto; -ms-overflow-style: none; scrollbar-width: none; }
+.chart-wrap::-webkit-scrollbar { display: none; }
 .chart-wrap svg { display: block; }
 
-/* ---- セクションラベル ---- */
+/* ---- Label ---- */
 .label {
-  font-size: 0.8rem;
-  font-weight: 600;
+  font-size: 0.72rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--color-muted);
+  letter-spacing: 0.1em;
+  color: var(--text-3);
 }
 
-/* ---- トグル ---- */
+/* ---- Toggle (clef / view tabs) ---- */
 .toggle-group {
   display: flex;
-  gap: 8px;
-}
-.toggle-btn {
-  padding: 6px 14px;
-  border-radius: 20px;
-  border: 1.5px solid var(--color-border);
-  background: transparent;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.toggle-btn.active {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: #fff;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
-/* ---- 設定画面 ---- */
+.toggle-btn {
+  padding: 6px 16px;
+  border-radius: 20px;
+  border: 1.5px solid var(--border-2);
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.17s;
+}
+.toggle-btn:hover {
+  border-color: var(--gold-dim);
+  color: var(--gold);
+}
+.toggle-btn.active {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #09090e;
+  font-weight: 700;
+  box-shadow: 0 0 14px var(--gold-glow);
+}
+
+/* ---- Settings ---- */
 .settings-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--color-border);
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
 }
 .settings-row:last-child { border-bottom: none; }
 
-/* ---- 結果画面 ---- */
+/* ---- Result screen ---- */
 .result-stat {
   text-align: center;
 }
 .result-stat .value {
-  font-size: 3rem;
-  font-weight: 800;
+  font-family: var(--font-display);
+  font-size: 3.2rem;
+  font-weight: 700;
   line-height: 1;
+  color: var(--gold);
 }
 .result-stat .unit {
-  font-size: 0.9rem;
-  color: var(--color-muted);
-  margin-top: 4px;
+  font-size: 0.85rem;
+  color: var(--text-2);
+  margin-top: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
+
 .wrong-list { list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
 .wrong-badge {
-  padding: 4px 10px;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  padding: 4px 12px;
+  background: rgba(240,84,84,0.12);
+  border: 1px solid rgba(240,84,84,0.4);
   border-radius: 20px;
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--color-wrong);
+  color: var(--wrong);
 }
 
-/* ---- 参照チャート ---- */
+/* ---- Ref chart ---- */
 .ref-chart { overflow-x: auto; }
 
-/* ---- レスポンシブ ---- */
-@media (max-width: 400px) {
-  .choices { grid-template-columns: 1fr; }
+/* ---- Scrollbar (Webkit) ---- */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 3px; }
+
+/* ---- Responsive ---- */
+@media (max-width: 420px) {
   .home-grid { grid-template-columns: 1fr; }
+  .page-title { font-size: 1.65rem; }
+  .timer { font-size: 1.8rem; }
 }

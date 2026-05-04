@@ -116,6 +116,8 @@ export function PracticePage(settings: UserSettings): HTMLElement {
     if (settings.mode === 'timeAttack') {
       const sec = Math.ceil(session.getRemainingMs() / 1000);
       timerEl.textContent = `⏱ ${sec}s`;
+      timerEl.classList.toggle('warn',   sec <= 10 && sec > 5);
+      timerEl.classList.toggle('danger', sec <= 5);
       streakEl.textContent = `${session.answers.filter(a => a.correct).length} 正解`;
     } else if (settings.mode === 'streak') {
       timerEl.textContent = '';
