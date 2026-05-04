@@ -409,3 +409,60 @@ body {
   .page-title { font-size: 1.65rem; }
   .timer { font-size: 1.8rem; }
 }
+
+/* ---- Rank card (HomePage) ---- */
+.rank-card {
+  border-color: var(--gold-dim);
+  background: linear-gradient(135deg, var(--surface) 60%, rgba(232,184,75,0.06) 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rank-name {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+}
+
+.rank-details {
+  display: flex;
+  gap: 20px;
+  font-size: 0.82rem;
+  color: var(--text-2);
+  flex-wrap: wrap;
+}
+
+.rank-details strong {
+  color: var(--text);
+}
+
+/* ---- Rank-up banner (ResultPage) ---- */
+.rank-up-banner {
+  background: linear-gradient(135deg, rgba(232,184,75,0.18), rgba(232,184,75,0.08));
+  border: 1.5px solid var(--gold-dim);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--gold);
+  text-align: center;
+  animation: rankUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.rank-up-banner .from {
+  color: var(--text-2);
+  font-weight: 500;
+}
+
+.rank-up-banner .to {
+  color: var(--gold-bright);
+  font-weight: 700;
+}
+
+@keyframes rankUp {
+  from { opacity: 0; transform: scale(0.9) translateY(-8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}

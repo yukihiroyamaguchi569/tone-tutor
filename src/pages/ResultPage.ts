@@ -2,6 +2,8 @@ import type { SessionResult } from '../types/index.js';
 import { navigate } from '../router.js';
 import { loadSettings } from '../core/storage/settingsStore.js';
 import { displayName, midiToPitch } from '../core/music/pitch.js';
+import { loadStats } from '../core/storage/statsStore.js';
+import { calcRank, getPreviousRankIndex, setPreviousRankIndex, RANKS } from '../core/quiz/rank.js';
 
 export function ResultPage(): HTMLElement {
   const page = document.createElement('div');
@@ -20,6 +22,12 @@ export function ResultPage(): HTMLElement {
 
   const result = JSON.parse(raw) as SessionResult;
   const settings = loadSettings();
+
+  const stats = loadStats();
+  const rank = calcRank(stats.sessions);
+  const prevIndex = getPreviousRankIndex();
+  setPreviousRankIndex(rank.index);
+
   const correct = result.answers.filter(a => a.correct).length;
   const total = result.answers.length;
   const rate = total > 0 ? Math.round((correct / total) * 100) : 0;
@@ -32,6 +40,15 @@ export function ResultPage(): HTMLElement {
   const modeTag = document.createElement('span');
   modeTag.className = 'label';
   modeTag.textContent = modeLabel;
+
+  // 昇段バナー（前回より段位が上がった場合のみ）
+  const isRankUp = prevIndex >= 0 && rank.index > prevIndex;
+  if (isRankUp) {
+    const banner = document.createElement('div');
+    banner.className = 'rank-up-banner';
+    banner.innerHTML = `🏅 昇段！ <span class="from">${RANKS[prevIndex].name}</span> → <span class="to">${rank.name}</span>`;
+    page.appendChild(banner);
+  }
 
   // スコア
   const statGrid = document.createElement('div');

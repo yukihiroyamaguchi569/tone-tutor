@@ -1,6 +1,7 @@
 import { navigate } from '../router.js';
 import { loadSettings } from '../core/storage/settingsStore.js';
-import { loadLastWrong } from '../core/storage/statsStore.js';
+import { loadLastWrong, loadStats } from '../core/storage/statsStore.js';
+import { calcRank } from '../core/quiz/rank.js';
 
 export function HomePage(): HTMLElement {
   const page = document.createElement('div');
@@ -19,6 +20,21 @@ export function HomePage(): HTMLElement {
   subtitle.textContent = '楽譜読譜トレーナー';
 
   hero.append(title, subtitle);
+
+  const stats = loadStats();
+  const rank = calcRank(stats.sessions);
+
+  const rankCard = document.createElement('div');
+  rankCard.className = 'card rank-card';
+  rankCard.title = '直近10セッションの正答率×速度スコアで算出';
+  rankCard.innerHTML = `
+    <div class="rank-name">${rank.name}</div>
+    <div class="rank-details">
+      <span>スコア <strong>${rank.score.toFixed(1)}</strong></span>
+      <span>正答率 <strong>${rank.rate > 0 ? Math.round(rank.rate * 100) : '—'}%</strong></span>
+      <span>avgMs <strong>${rank.avgMs > 0 ? Math.round(rank.avgMs) : '—'}</strong></span>
+    </div>
+  `;
 
   const settings = loadSettings();
   const modeLabel = { timeAttack: 'タイムアタック', streak: '連続正解', untimed: '通常' }[settings.mode];
@@ -71,6 +87,6 @@ export function HomePage(): HTMLElement {
 
   grid.append(startBtn, reviewBtn, progressBtn, settingsBtn, chartTreble);
 
-  page.append(hero, infoCard, grid);
+  page.append(hero, rankCard, infoCard, grid);
   return page;
 }
