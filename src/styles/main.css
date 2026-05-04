@@ -251,6 +251,17 @@ body {
   padding: 4px 12px;
 }
 
+.cancel-btn {
+  font-size: 0.85rem;
+  padding: 4px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border-2);
+  background: var(--surface-2);
+  color: var(--text-2);
+  cursor: pointer;
+}
+.cancel-btn:hover { background: var(--wrong); color: #fff; border-color: transparent; }
+
 /* ---- Sheet music container ---- */
 .score-container {
   display: flex;

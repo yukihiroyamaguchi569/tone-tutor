@@ -27,8 +27,17 @@ export function PracticePage(settings: UserSettings): HTMLElement {
   timerEl.className = 'timer';
   const streakEl = document.createElement('span');
   streakEl.className = 'streak';
+  const cancelBtn = document.createElement('button');
+  cancelBtn.className = 'cancel-btn';
+  cancelBtn.textContent = '中止';
+  cancelBtn.addEventListener('click', () => {
+    clearInterval(timerHandle);
+    offMidiNote();
+    navigate('/home');
+  });
   scoreBar.appendChild(timerEl);
   scoreBar.appendChild(streakEl);
+  scoreBar.appendChild(cancelBtn);
 
   const scoreContainer = document.createElement('div');
   scoreContainer.className = 'score-container';
