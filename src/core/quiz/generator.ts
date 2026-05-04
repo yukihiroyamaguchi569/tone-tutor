@@ -27,15 +27,19 @@ export function generateQuestion(
   const clef = clefs[Math.floor(Math.random() * clefs.length)]!;
   const range = settings.ranges[clef];
 
-  // 全12音を候補に（直前2問と重複回避）
+  // 直前の音から全音（±2半音）以内を除外
+  const lastMidi = recentMidi.at(-1);
   const candidates: number[] = [];
   for (let m = range.minMidi; m <= range.maxMidi; m++) {
-    if (!recentMidi.slice(-2).includes(m)) candidates.push(m);
+    if (lastMidi === undefined || Math.abs(m - lastMidi) > 2) candidates.push(m);
   }
+  // 候補が空の場合は直前と同じ音だけ除く
   const pool = candidates.length > 0 ? candidates : (() => {
     const all: number[] = [];
-    for (let m = range.minMidi; m <= range.maxMidi; m++) all.push(m);
-    return all;
+    for (let m = range.minMidi; m <= range.maxMidi; m++) {
+      if (m !== lastMidi) all.push(m);
+    }
+    return all.length > 0 ? all : [range.minMidi];
   })();
 
   const weights = pool.map(m => {

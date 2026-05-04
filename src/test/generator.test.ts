@@ -25,14 +25,12 @@ describe('generateQuestion', () => {
     expect(midis.size).toBeGreaterThan(7);
   });
 
-  it('直前 2 問と重複しない (候補が十分な場合)', () => {
+  it('直前の音から全音（±2半音）以内を出さない', () => {
     const settings = defaultSettings();
-    const recent = [60, 61]; // C4, C#4
-    let overlap = 0;
-    for (let i = 0; i < 50; i++) {
-      const q = generateQuestion(settings, [], recent);
-      if (recent.includes(q.pitch.midi)) overlap++;
+    const lastMidi = 65; // F4
+    for (let i = 0; i < 100; i++) {
+      const q = generateQuestion(settings, [], [lastMidi]);
+      expect(Math.abs(q.pitch.midi - lastMidi)).toBeGreaterThan(2);
     }
-    expect(overlap).toBe(0);
   });
 });
