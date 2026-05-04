@@ -1,6 +1,6 @@
 import { loadStats } from '../core/storage/statsStore.js';
 import { loadSettings } from '../core/storage/settingsStore.js';
-import { renderSessionChart, renderHeatmap } from '../core/render/chart.js';
+import { renderSessionChart, renderCorrectCountChart, renderHeatmap } from '../core/render/chart.js';
 import { navigate } from '../router.js';
 
 export function ProgressPage(): HTMLElement {
@@ -40,6 +40,16 @@ export function ProgressPage(): HTMLElement {
     <div><div style="font-size:1.6rem;font-weight:800">${overallRate}%</div><div class="label">全体正答率</div></div>
   `;
 
+  // 正答問数グラフ
+  const countSection = document.createElement('div');
+  const countLabel = document.createElement('p');
+  countLabel.className = 'label';
+  countLabel.textContent = '直近 20 セッション正答問数';
+  const countWrap = document.createElement('div');
+  countWrap.className = 'chart-wrap card';
+  countWrap.appendChild(renderCorrectCountChart(stats.sessions));
+  countSection.append(countLabel, countWrap);
+
   // 音別ヒートマップ
   const heatSection = document.createElement('div');
   const heatLabel = document.createElement('p');
@@ -55,6 +65,6 @@ export function ProgressPage(): HTMLElement {
   backBtn.textContent = '← 戻る';
   backBtn.addEventListener('click', () => navigate('/home'));
 
-  page.append(title, summaryCard, chartSection, heatSection, backBtn);
+  page.append(title, summaryCard, chartSection, countSection, heatSection, backBtn);
   return page;
 }

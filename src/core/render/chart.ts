@@ -2,10 +2,14 @@ import type { SessionResult, NoteStat } from '../../types/index.js';
 import { midiToPitch, displayName } from '../music/pitch.js';
 import type { NotationStyle } from '../../types/index.js';
 
-/** 直近 N セッションの正答率折れ線 SVG */
-export function renderSessionChart(sessions: SessionResult[], maxSessions = 20): SVGSVGElement {
-  const recent = sessions.slice(0, maxSessions).reverse();
-  const w = Math.max(300, recent.length * 30);
+/** 折れ線グラフ共通描画 */
+function renderLineChart(
+  values: number[],
+  maxValue: number,
+  gridLabels: Array<{ ratio: number; text: string }>,
+  color: string
+): SVGSVGElement {
+  const w = Math.max(300, values.length * 30);
   const h = 120;
   const padL = 36, padR = 16, padT = 12, padB = 28;
   const chartW = w - padL - padR;
@@ -16,60 +20,71 @@ export function renderSessionChart(sessions: SessionResult[], maxSessions = 20):
   svg.setAttribute('height', String(h));
   svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
 
-  const rates = recent.map(s =>
-    s.answers.length > 0 ? s.answers.filter(a => a.correct).length / s.answers.length : 0
-  );
-
-  // グリッド線
-  [0, 0.5, 1].forEach(v => {
-    const y = padT + chartH - v * chartH;
+  gridLabels.forEach(({ ratio, text }) => {
+    const y = padT + chartH - ratio * chartH;
     const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-    line.setAttribute('x1', String(padL));
-    line.setAttribute('x2', String(padL + chartW));
-    line.setAttribute('y1', String(y));
-    line.setAttribute('y2', String(y));
-    line.setAttribute('stroke', '#e2e8f0');
-    line.setAttribute('stroke-width', '1');
+    line.setAttribute('x1', String(padL)); line.setAttribute('x2', String(padL + chartW));
+    line.setAttribute('y1', String(y));    line.setAttribute('y2', String(y));
+    line.setAttribute('stroke', '#e2e8f0'); line.setAttribute('stroke-width', '1');
     svg.appendChild(line);
     const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-    label.setAttribute('x', String(padL - 4));
-    label.setAttribute('y', String(y + 4));
-    label.setAttribute('text-anchor', 'end');
-    label.setAttribute('font-size', '9');
+    label.setAttribute('x', String(padL - 4)); label.setAttribute('y', String(y + 4));
+    label.setAttribute('text-anchor', 'end'); label.setAttribute('font-size', '9');
     label.setAttribute('fill', '#94a3b8');
-    label.textContent = `${Math.round(v * 100)}%`;
+    label.textContent = text;
     svg.appendChild(label);
   });
 
-  if (rates.length > 0) {
-    const pts = rates.map((r, i) => {
-      const x = padL + (recent.length <= 1 ? chartW / 2 : (i / (recent.length - 1)) * chartW);
-      const y = padT + chartH - r * chartH;
+  if (values.length > 0 && maxValue > 0) {
+    const pts = values.map((v, i) => {
+      const x = padL + (values.length <= 1 ? chartW / 2 : (i / (values.length - 1)) * chartW);
+      const y = padT + chartH - (v / maxValue) * chartH;
       return `${x},${y}`;
     });
     const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
     poly.setAttribute('points', pts.join(' '));
     poly.setAttribute('fill', 'none');
-    poly.setAttribute('stroke', '#2563eb');
+    poly.setAttribute('stroke', color);
     poly.setAttribute('stroke-width', '2');
     poly.setAttribute('stroke-linejoin', 'round');
     poly.setAttribute('stroke-linecap', 'round');
     svg.appendChild(poly);
 
-    // 点
-    rates.forEach((r, i) => {
-      const x = padL + (recent.length <= 1 ? chartW / 2 : (i / (recent.length - 1)) * chartW);
-      const y = padT + chartH - r * chartH;
+    values.forEach((v, i) => {
+      const x = padL + (values.length <= 1 ? chartW / 2 : (i / (values.length - 1)) * chartW);
+      const y = padT + chartH - (v / maxValue) * chartH;
       const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-      circle.setAttribute('cx', String(x));
-      circle.setAttribute('cy', String(y));
-      circle.setAttribute('r', '4');
-      circle.setAttribute('fill', '#2563eb');
+      circle.setAttribute('cx', String(x)); circle.setAttribute('cy', String(y));
+      circle.setAttribute('r', '4');        circle.setAttribute('fill', color);
       svg.appendChild(circle);
     });
   }
 
   return svg;
+}
+
+/** 直近 N セッションの正答率折れ線 SVG */
+export function renderSessionChart(sessions: SessionResult[], maxSessions = 20): SVGSVGElement {
+  const recent = sessions.slice(0, maxSessions).reverse();
+  const rates = recent.map(s =>
+    s.answers.length > 0 ? s.answers.filter(a => a.correct).length / s.answers.length : 0
+  );
+  return renderLineChart(rates, 1, [
+    { ratio: 0, text: '0%' }, { ratio: 0.5, text: '50%' }, { ratio: 1, text: '100%' },
+  ], '#2563eb');
+}
+
+/** 直近 N セッションの正答問数折れ線 SVG */
+export function renderCorrectCountChart(sessions: SessionResult[], maxSessions = 20): SVGSVGElement {
+  const recent = sessions.slice(0, maxSessions).reverse();
+  const counts = recent.map(s => s.answers.filter(a => a.correct).length);
+  const maxCount = Math.max(...counts, 1);
+  const mid = Math.round(maxCount / 2);
+  return renderLineChart(counts, maxCount, [
+    { ratio: 0, text: '0' },
+    { ratio: mid / maxCount, text: String(mid) },
+    { ratio: 1, text: String(maxCount) },
+  ], '#16a34a');
 }
 
 /** 音別ヒートマップ SVG */
