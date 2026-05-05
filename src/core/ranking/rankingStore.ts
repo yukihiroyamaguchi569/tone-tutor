@@ -1,14 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
 import type { SessionResult, SessionMode } from '../../types/index.js';
 
+/** ユーザーの楽器・読譜経験レベル */
 export type ExperienceLevel = 'reader' | 'player' | 'beginner';
 
+/** ランキング表示用のレベル定義一覧 */
 export const LEVELS: { key: ExperienceLevel; label: string }[] = [
   { key: 'reader',   label: '音符が読める' },
   { key: 'player',   label: '楽器経験あり' },
   { key: 'beginner', label: '楽器経験なし' },
 ];
 
+/** Supabase rankings テーブルの1行 */
 export interface RankingRow {
   id: string;
   nickname: string;
@@ -31,6 +34,12 @@ function getClient() {
   return _client;
 }
 
+/**
+ * セッション結果から rankings テーブルへの INSERT ペイロードを組み立てる。
+ * @param nickname 表示名（1〜20文字）
+ * @param level ユーザーの経験レベル
+ * @param result 完了したセッションの結果
+ */
 export function buildRankingPayload(nickname: string, level: ExperienceLevel, result: SessionResult) {
   const correct = result.answers.filter(a => a.correct).length;
   return {
@@ -43,6 +52,10 @@ export function buildRankingPayload(nickname: string, level: ExperienceLevel, re
   };
 }
 
+/**
+ * スコアを Supabase rankings テーブルに登録する。
+ * @throws ニックネームが範囲外、または DB エラーの場合
+ */
 export async function submitRanking(nickname: string, level: ExperienceLevel, result: SessionResult): Promise<void> {
   if (nickname.length === 0 || nickname.length > 20) throw new Error('ニックネームは1〜20文字で入力してください');
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -50,6 +63,12 @@ export async function submitRanking(nickname: string, level: ExperienceLevel, re
   if (error) throw new Error(error.message);
 }
 
+/**
+ * 指定モード・レベルの上位ランキングを取得する。
+ * @param mode セッションモード
+ * @param level 経験レベル
+ * @param limit 取得件数（デフォルト 20）
+ */
 export async function fetchTopRankings(mode: SessionMode, level: ExperienceLevel, limit = 20): Promise<RankingRow[]> {
   const { data, error } = await getClient()
     .from('rankings')

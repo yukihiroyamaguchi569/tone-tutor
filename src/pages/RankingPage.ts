@@ -8,6 +8,7 @@ const MODES: { key: SessionMode; label: string }[] = [
   { key: 'untimed',    label: '通常' },
 ];
 
+/** モード × 経験レベル別のスコアランキングを表示するページ */
 export function RankingPage(): HTMLElement {
   const page = document.createElement('div');
   page.className = 'page';

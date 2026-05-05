@@ -6,6 +6,7 @@ import { displayName, midiToPitch } from '../core/music/pitch.js';
 import { loadStats } from '../core/storage/statsStore.js';
 import { calcRank, getPreviousRankIndex, setPreviousRankIndex, RANKS } from '../core/quiz/rank.js';
 
+/** セッション結果を表示し、ランキング登録フォームを提供するページ */
 export function ResultPage(): HTMLElement {
   const page = document.createElement('div');
   page.className = 'page';
