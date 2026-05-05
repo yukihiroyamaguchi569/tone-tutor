@@ -19,6 +19,7 @@ export function PracticePage(settings: UserSettings): HTMLElement {
   const recentMidi: number[] = [];
   let questionStart = 0;
   let timerHandle = 0;
+  let pendingTimeout = 0;
 
   // --- UI 要素 ---
   const scoreBar = document.createElement('div');
@@ -27,8 +28,18 @@ export function PracticePage(settings: UserSettings): HTMLElement {
   timerEl.className = 'timer';
   const streakEl = document.createElement('span');
   streakEl.className = 'streak';
+  const cancelBtn = document.createElement('button');
+  cancelBtn.className = 'cancel-btn';
+  cancelBtn.textContent = '中止';
+  cancelBtn.addEventListener('click', () => {
+    clearInterval(timerHandle);
+    clearTimeout(pendingTimeout);
+    offMidiNote();
+    navigate('/home');
+  });
   scoreBar.appendChild(timerEl);
   scoreBar.appendChild(streakEl);
+  scoreBar.appendChild(cancelBtn);
 
   const scoreContainer = document.createElement('div');
   scoreContainer.className = 'score-container';
@@ -106,10 +117,10 @@ export function PracticePage(settings: UserSettings): HTMLElement {
     updateHUD();
 
     if (session.finished) {
-      setTimeout(finish, 600);
+      pendingTimeout = setTimeout(finish, 600);
       return;
     }
-    setTimeout(nextQuestion, answer.correct ? 300 : 700);
+    pendingTimeout = setTimeout(nextQuestion, answer.correct ? 300 : 700);
   }
 
   function updateHUD(): void {
