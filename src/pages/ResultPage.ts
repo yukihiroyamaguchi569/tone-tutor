@@ -1,5 +1,6 @@
 import type { SessionResult } from '../types/index.js';
 import { navigate } from '../router.js';
+import { submitRanking, LEVELS, type ExperienceLevel } from '../core/ranking/rankingStore.js';
 import { loadSettings } from '../core/storage/settingsStore.js';
 import { displayName, midiToPitch } from '../core/music/pitch.js';
 import { loadStats } from '../core/storage/statsStore.js';
@@ -110,6 +111,70 @@ export function ResultPage(): HTMLElement {
   reviewBtn.addEventListener('click', () => navigate('/practice?review=1'));
 
   btnRow.append(homeBtn, retryBtn, reviewBtn);
-  page.append(title, modeTag, statGrid, wrongSection, btnRow);
+
+  // ランキング登録フォーム
+  const rankSection = document.createElement('div');
+  rankSection.className = 'card';
+  rankSection.style.cssText = 'display:flex;flex-direction:column;gap:10px;';
+
+  const rankLabel = document.createElement('p');
+  rankLabel.style.cssText = 'font-weight:600;margin:0;';
+  rankLabel.textContent = '🏆 ランキングに登録';
+
+  // レベル選択
+  let selectedLevel = (localStorage.getItem('tt:level') ?? 'beginner') as ExperienceLevel;
+  const levelRow = document.createElement('div');
+  levelRow.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;';
+  LEVELS.forEach(({ key, label }) => {
+    const btn = document.createElement('button');
+    btn.className = selectedLevel === key ? 'btn btn-primary' : 'btn btn-secondary';
+    btn.textContent = label;
+    btn.style.cssText = 'font-size:0.8rem;padding:4px 10px;';
+    btn.addEventListener('click', () => {
+      selectedLevel = key;
+      levelRow.querySelectorAll('button').forEach(b => { b.className = 'btn btn-secondary'; (b as HTMLButtonElement).style.cssText = 'font-size:0.8rem;padding:4px 10px;'; });
+      btn.className = 'btn btn-primary';
+      btn.style.cssText = 'font-size:0.8rem;padding:4px 10px;';
+    });
+    levelRow.appendChild(btn);
+  });
+
+  const nicknameRow = document.createElement('div');
+  nicknameRow.style.cssText = 'display:flex;gap:8px;';
+
+  const nicknameInput = document.createElement('input');
+  nicknameInput.type = 'text';
+  nicknameInput.placeholder = 'ニックネーム（20文字以内）';
+  nicknameInput.maxLength = 20;
+  nicknameInput.value = localStorage.getItem('tt:nickname') ?? '';
+  nicknameInput.style.cssText = 'flex:1;padding:8px 10px;border:1px solid var(--border,#e2e8f0);border-radius:6px;font-size:0.9rem;';
+
+  const submitBtn = document.createElement('button');
+  submitBtn.className = 'btn btn-primary';
+  submitBtn.textContent = '送信';
+
+  const statusEl = document.createElement('p');
+  statusEl.style.cssText = 'font-size:0.85rem;margin:0;color:var(--text-2);';
+
+  submitBtn.addEventListener('click', async () => {
+    const nickname = nicknameInput.value.trim();
+    if (!nickname) { statusEl.textContent = 'ニックネームを入力してください'; return; }
+    submitBtn.disabled = true;
+    statusEl.textContent = '送信中…';
+    try {
+      await submitRanking(nickname, selectedLevel, result);
+      localStorage.setItem('tt:nickname', nickname);
+      localStorage.setItem('tt:level', selectedLevel);
+      navigate('/ranking');
+    } catch {
+      statusEl.textContent = '送信に失敗しました。時間をおいて再試行してください。';
+      submitBtn.disabled = false;
+    }
+  });
+
+  nicknameRow.append(nicknameInput, submitBtn);
+  rankSection.append(rankLabel, levelRow, nicknameRow, statusEl);
+
+  page.append(title, modeTag, statGrid, wrongSection, btnRow, rankSection);
   return page;
 }

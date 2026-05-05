@@ -86,7 +86,12 @@ export function HomePage(): HTMLElement {
   chartTreble.innerHTML = '📖 参照チャート';
   chartTreble.addEventListener('click', () => navigate('/chart/treble'));
 
-  grid.append(startBtn, reviewBtn, progressBtn, settingsBtn, chartTreble);
+  const rankingBtn = document.createElement('button');
+  rankingBtn.className = 'btn btn-secondary btn-full';
+  rankingBtn.innerHTML = '🏆 ランキング';
+  rankingBtn.addEventListener('click', () => navigate('/ranking'));
+
+  grid.append(startBtn, reviewBtn, progressBtn, settingsBtn, chartTreble, rankingBtn);
 
   page.append(hero, rankCard, infoCard, grid);
   return page;
