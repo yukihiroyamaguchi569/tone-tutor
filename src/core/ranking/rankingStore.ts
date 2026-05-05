@@ -22,10 +22,12 @@ export interface RankingRow {
 
 let _client: ReturnType<typeof createClient> | null = null;
 function getClient() {
-  if (!_client) _client = createClient(
-    import.meta.env.VITE_SUPABASE_URL ?? '',
-    import.meta.env.VITE_SUPABASE_ANON_KEY ?? ''
-  );
+  if (!_client) {
+    const url = import.meta.env.VITE_SUPABASE_URL;
+    const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    if (!url || !key) throw new Error('Supabase 環境変数が未設定です (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY)');
+    _client = createClient(url, key);
+  }
   return _client;
 }
 
@@ -42,6 +44,7 @@ export function buildRankingPayload(nickname: string, level: ExperienceLevel, re
 }
 
 export async function submitRanking(nickname: string, level: ExperienceLevel, result: SessionResult): Promise<void> {
+  if (nickname.length === 0 || nickname.length > 20) throw new Error('ニックネームは1〜20文字で入力してください');
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await getClient().from('rankings').insert(buildRankingPayload(nickname, level, result) as any);
   if (error) throw new Error(error.message);

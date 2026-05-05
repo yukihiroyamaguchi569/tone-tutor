@@ -61,11 +61,12 @@ export function RankingPage(): HTMLElement {
       tr.style.cssText = 'border-bottom:1px solid var(--border,#e2e8f0);';
       tr.innerHTML = `
         <td style="padding:8px 6px;color:var(--text-2);">${i + 1}</td>
-        <td style="padding:8px 6px;font-weight:${i < 3 ? '600' : '400'};">${row.nickname}</td>
+        <td style="padding:8px 6px;font-weight:${i < 3 ? '600' : '400'};"></td>
         <td style="padding:8px 6px;text-align:right;font-weight:700;">${row.score}</td>
         <td style="padding:8px 6px;text-align:right;color:var(--text-2);">${rate}</td>
         <td style="padding:8px 6px;text-align:right;color:var(--text-2);font-size:0.8rem;">${date}</td>
       `;
+      tr.querySelectorAll('td')[1]!.textContent = row.nickname;
       tbody.appendChild(tr);
     });
 

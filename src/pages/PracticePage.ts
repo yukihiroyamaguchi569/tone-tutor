@@ -117,10 +117,10 @@ export function PracticePage(settings: UserSettings): HTMLElement {
     updateHUD();
 
     if (session.finished) {
-      pendingTimeout = setTimeout(finish, 600) as unknown as number;
+      pendingTimeout = window.setTimeout(finish, 600);
       return;
     }
-    pendingTimeout = setTimeout(nextQuestion, answer.correct ? 300 : 700) as unknown as number;
+    pendingTimeout = window.setTimeout(nextQuestion, answer.correct ? 300 : 700);
   }
 
   function updateHUD(): void {
