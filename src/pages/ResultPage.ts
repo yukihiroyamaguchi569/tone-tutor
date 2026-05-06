@@ -123,7 +123,8 @@ export function ResultPage(): HTMLElement {
   rankLabel.textContent = '🏆 ランキングに登録';
 
   // レベル選択
-  let selectedLevel = (localStorage.getItem('tt:level') ?? 'beginner') as ExperienceLevel;
+  const savedLevel = localStorage.getItem('tt:level');
+  let selectedLevel: ExperienceLevel = LEVELS.some(l => l.key === savedLevel) ? (savedLevel as ExperienceLevel) : 'beginner';
   const levelRow = document.createElement('div');
   levelRow.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;';
   LEVELS.forEach(({ key, label }) => {
@@ -167,7 +168,8 @@ export function ResultPage(): HTMLElement {
       localStorage.setItem('tt:nickname', nickname);
       localStorage.setItem('tt:level', selectedLevel);
       navigate('/ranking');
-    } catch {
+    } catch (e) {
+      console.error('[ResultPage] submitRanking failed', e);
       statusEl.textContent = '送信に失敗しました。時間をおいて再試行してください。';
       submitBtn.disabled = false;
     }

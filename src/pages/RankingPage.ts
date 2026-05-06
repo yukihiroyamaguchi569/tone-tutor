@@ -84,7 +84,8 @@ export function RankingPage(): HTMLElement {
       const rows = await fetchTopRankings(currentMode, currentLevel);
       if (gen !== loadGen) return;
       renderTable(rows);
-    } catch {
+    } catch (e) {
+      console.error('[RankingPage] fetchTopRankings failed', e);
       if (gen !== loadGen) return;
       tableArea.innerHTML = '<p style="text-align:center;padding:24px;color:#ef4444;">取得に失敗しました。Supabase の設定を確認してください。</p>';
     }
