@@ -57,7 +57,9 @@ export function buildRankingPayload(nickname: string, level: ExperienceLevel, re
  * @throws ニックネームが範囲外、または DB エラーの場合
  */
 export async function submitRanking(nickname: string, level: ExperienceLevel, result: SessionResult): Promise<void> {
-  if (nickname.length === 0 || nickname.length > 20) throw new Error('ニックネームは1〜20文字で入力してください');
+  const trimmed = nickname.trim();
+  if (trimmed.length === 0 || trimmed.length > 20) throw new Error('ニックネームは1〜20文字で入力してください');
+  nickname = trimmed;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await getClient().from('rankings').insert(buildRankingPayload(nickname, level, result) as any);
   if (error) throw new Error(error.message);
@@ -70,6 +72,7 @@ export async function submitRanking(nickname: string, level: ExperienceLevel, re
  * @param limit 取得件数（デフォルト 20）
  */
 export async function fetchTopRankings(mode: SessionMode, level: ExperienceLevel, limit = 20): Promise<RankingRow[]> {
+  const safeLimit = Math.max(1, Math.min(limit, 100));
   const { data, error } = await getClient()
     .from('rankings')
     .select('*')
@@ -77,7 +80,7 @@ export async function fetchTopRankings(mode: SessionMode, level: ExperienceLevel
     .eq('level', level)
     .order('score', { ascending: false })
     .order('created_at', { ascending: false })
-    .limit(limit);
+    .limit(safeLimit);
   if (error) throw new Error(error.message);
   return (data ?? []) as RankingRow[];
 }

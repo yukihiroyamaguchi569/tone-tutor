@@ -28,7 +28,8 @@ export function RankingPage(): HTMLElement {
   const tableArea = document.createElement('div');
 
   let currentMode: SessionMode = 'timeAttack';
-  let currentLevel: ExperienceLevel = (localStorage.getItem('tt:level') as ExperienceLevel) ?? 'beginner';
+  const savedLevel = localStorage.getItem('tt:level');
+  let currentLevel: ExperienceLevel = LEVELS.some(l => l.key === savedLevel) ? (savedLevel as ExperienceLevel) : 'beginner';
 
   function renderTable(rows: RankingRow[]): void {
     tableArea.innerHTML = '';
@@ -103,6 +104,7 @@ export function RankingPage(): HTMLElement {
     btn.style.cssText = 'font-size:0.85rem;';
     btn.addEventListener('click', () => {
       currentLevel = key;
+      localStorage.setItem('tt:level', key);
       setActive(levelRow, btn);
       load();
     });
