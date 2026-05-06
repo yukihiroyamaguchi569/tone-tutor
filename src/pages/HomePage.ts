@@ -3,6 +3,7 @@ import { loadSettings } from '../core/storage/settingsStore.js';
 import { loadLastWrong, loadStats } from '../core/storage/statsStore.js';
 import { calcRank } from '../core/quiz/rank.js';
 
+/** 段位・設定サマリーと各画面へのナビゲーションを表示するホームページ */
 export function HomePage(): HTMLElement {
   const page = document.createElement('div');
   page.className = 'page';
@@ -86,7 +87,12 @@ export function HomePage(): HTMLElement {
   chartTreble.innerHTML = '📖 参照チャート';
   chartTreble.addEventListener('click', () => navigate('/chart/treble'));
 
-  grid.append(startBtn, reviewBtn, progressBtn, settingsBtn, chartTreble);
+  const rankingBtn = document.createElement('button');
+  rankingBtn.className = 'btn btn-secondary btn-full';
+  rankingBtn.innerHTML = '🏆 ランキング';
+  rankingBtn.addEventListener('click', () => navigate('/ranking'));
+
+  grid.append(startBtn, reviewBtn, progressBtn, settingsBtn, chartTreble, rankingBtn);
 
   page.append(hero, rankCard, infoCard, grid);
   return page;

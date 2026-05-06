@@ -6,6 +6,7 @@ import { ResultPage } from './pages/ResultPage.js';
 import { SettingsPage } from './pages/SettingsPage.js';
 import { ProgressPage } from './pages/ProgressPage.js';
 import { ChartRefPage } from './pages/ChartRefPage.js';
+import { RankingPage } from './pages/RankingPage.js';
 import { loadSettings } from './core/storage/settingsStore.js';
 import { requestMidi } from './core/input/midi.js';
 
@@ -19,6 +20,7 @@ addRoute('/result', () => ResultPage());
 addRoute('/settings', () => SettingsPage());
 addRoute('/progress', () => ProgressPage());
 addRoute('/chart/:clef', (params) => ChartRefPage(params));
+addRoute('/ranking', () => RankingPage());
 
 // アプリ起動
 const root = document.getElementById('app')!;
