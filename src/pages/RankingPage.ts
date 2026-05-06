@@ -75,12 +75,16 @@ export function RankingPage(): HTMLElement {
     tableArea.appendChild(table);
   }
 
+  let loadGen = 0;
   async function load(): Promise<void> {
+    const gen = ++loadGen;
     tableArea.innerHTML = '<p style="text-align:center;padding:24px;color:var(--text-2);">読み込み中…</p>';
     try {
       const rows = await fetchTopRankings(currentMode, currentLevel);
+      if (gen !== loadGen) return;
       renderTable(rows);
     } catch {
+      if (gen !== loadGen) return;
       tableArea.innerHTML = '<p style="text-align:center;padding:24px;color:#ef4444;">取得に失敗しました。Supabase の設定を確認してください。</p>';
     }
   }
