@@ -3,6 +3,7 @@ import { loadSettings } from '../core/storage/settingsStore.js';
 import { loadLastWrong, loadStats } from '../core/storage/statsStore.js';
 import { calcRank } from '../core/quiz/rank.js';
 
+/** 段位・設定サマリーと各画面へのナビゲーションを表示するホームページ */
 export function HomePage(): HTMLElement {
   const page = document.createElement('div');
   page.className = 'page';

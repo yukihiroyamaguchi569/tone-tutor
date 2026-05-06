@@ -9,6 +9,7 @@ import { renderKeyboard, highlightKey } from '../core/input/keyboard.js';
 import { onMidiNote, offMidiNote } from '../core/input/midi.js';
 import { navigate } from '../router.js';
 
+/** 設定に基づいて問題を出題し、回答を受け付ける練習ページ */
 export function PracticePage(settings: UserSettings): HTMLElement {
   const page = document.createElement('div');
   page.className = 'page';
