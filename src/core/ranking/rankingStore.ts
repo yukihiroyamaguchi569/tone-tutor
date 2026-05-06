@@ -16,7 +16,7 @@ export interface RankingRow {
   id: string;
   nickname: string;
   score: number;
-  mode: string;
+  mode: SessionMode;
   level: ExperienceLevel;
   total: number;
   correct: number;
